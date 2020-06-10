@@ -3,13 +3,9 @@ import pathlib
 import time
 from typing import List
 import requests
-# Selenium:
+import os.path
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import Select
+
 
 
 # selenium infinite scroll
@@ -68,7 +64,10 @@ def get_urls(classname:str, searchterms:List[str]):
             javascript = f.read()
             javascript = javascript.replace('urls.txt', f'urls{index}.txt')
             driver.execute_script(javascript)
-            time.sleep(5)
+            # sleep until URLs .txt file has been downloaded
+            url_txt_path = dl_path/f'urls{index}.txt'
+            while not os.path.exists(url_txt_path):
+                time.sleep(1)
         index +=1
     driver.close()
 
@@ -98,11 +97,16 @@ def get_images_from_urls(classname: str):
                     fpath = f'images/{classname}/{total_pics}.jpg'
                     with open(fpath, 'wb') as f:
                         f.write(pic_request.content)
+                        f.close()
                     print(f'Saved picture {urls.index(pic) + 1} of {len(urls)}.')
             except:
                 print(f'Failed to download image. Skipping...')
             total_pics +=1
         print('\n')
+
+
+# wait for URL directory to not be empty
+# i.e. wait for URL.txt to download
 
 
 # complete process
