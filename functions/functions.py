@@ -95,11 +95,12 @@ def get_images_from_urls(classname: str):
                 # request img from URL
                 pic_request = requests.get(pic)
                 if pic_request.status_code == 200:
-                    #TODO
+                    #TODO: fix filepath for downloads
                     print(f'test: images/{classname}/{total_pics}.jpg')
                     fpath = pathlib.Path(__file__).parent.parent
                     fpath = fpath/f'images/{classname}/{total_pics}.jpg'
                     print(fpath)
+                    #
                     with open(fpath, 'wb') as f:
                         f.write(pic_request.content)
                     print(f'Saved picture {urls.index(pic)+1} of {len(urls)}.')
