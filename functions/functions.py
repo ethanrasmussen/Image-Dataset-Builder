@@ -88,22 +88,17 @@ def get_images_from_urls(classname: str):
     for url_txt in files:
         print(f'\nOpening URL list {files.index(url_txt)+1} of {len(files)}...')
         # get all URLs from txt
-        urls = open(f'urls/{classname}/{url_txt}')
+        urls = open(f'urls/{classname}/{url_txt}').read().strip().split('\n')
         # get images from all urls
         for pic in urls:
             try:
                 # request img from URL
                 pic_request = requests.get(pic)
                 if pic_request.status_code == 200:
-                    #TODO: fix filepath for downloads
-                    print(f'test: images/{classname}/{total_pics}.jpg')
-                    fpath = pathlib.Path(__file__).parent.parent
-                    fpath = fpath/f'images/{classname}/{total_pics}.jpg'
-                    print(fpath)
-                    #
+                    fpath = f'images/{classname}/{total_pics}.jpg'
                     with open(fpath, 'wb') as f:
                         f.write(pic_request.content)
-                    print(f'Saved picture {urls.index(pic)+1} of {len(urls)}.')
+                    print(f'Saved picture {urls.index(pic) + 1} of {len(urls)}.')
             except:
                 print(f'Failed to download image. Skipping...')
             total_pics +=1
