@@ -5,6 +5,7 @@ from typing import List
 import requests
 import os.path
 from selenium import webdriver
+from func_timeout import *
 
 
 
@@ -91,22 +92,24 @@ def get_images_from_urls(classname: str):
         # get images from all urls
         for pic in urls:
             try:
-                # request img from URL
-                pic_request = requests.get(pic)
-                if pic_request.status_code == 200:
-                    fpath = f'images/{classname}/{total_pics}.jpg'
-                    with open(fpath, 'wb') as f:
-                        f.write(pic_request.content)
-                        f.close()
-                    print(f'Saved picture {urls.index(pic) + 1} of {len(urls)}.')
+                dl_img(pic_url=pic, classname=classname, total_pics=total_pics)
+                print(f'Saved picture {urls.index(pic) + 1} of {len(urls)}.')
             except:
                 print(f'Failed to download image. Skipping...')
             total_pics +=1
         print('\n')
 
 
-# wait for URL directory to not be empty
-# i.e. wait for URL.txt to download
+# download image with timeout
+@func_set_timeout(60)
+def dl_img(pic_url:str, classname:str, total_pics:int):
+    # request img from URL
+    pic_request = requests.get(pic_url)
+    if pic_request.status_code == 200:
+        fpath = f'images/{classname}/{total_pics}.jpg'
+        with open(fpath, 'wb') as f:
+            f.write(pic_request.content)
+            f.close()
 
 
 # complete process
